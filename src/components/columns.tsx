@@ -21,7 +21,7 @@ export const columns: ColumnDef<News>[] = [
   },
   {
     id: "actions",
-    header: "Detail",
+    header: "Action",
     cell: ({ row }) => {
       const news = row.original;
       return <EditDeleteNewsButton news={news} />;
