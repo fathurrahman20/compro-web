@@ -1,4 +1,4 @@
-export interface User {
+export interface Author {
   id: string;
   name: string;
   email: string;
@@ -12,5 +12,5 @@ export interface News {
   published: boolean;
   createdAt: string;
   updatedAt: string;
-  author: User;
+  author: Author;
 }

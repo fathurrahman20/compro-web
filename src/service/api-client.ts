@@ -7,7 +7,7 @@ export interface ErrorResponse {
 
 export interface FetchResponse<T> {
   success: boolean;
-  message: boolean;
+  message: string;
   data: T;
 }
 
@@ -22,7 +22,7 @@ export default class APIClient<T> {
     this.endpoint = endpoint;
   }
 
-  get = async (id: number | string, config?: AxiosRequestConfig) => {
+  get = async (id: string, config?: AxiosRequestConfig) => {
     const response = await axiosInstance.get<FetchResponse<T>>(
       `${this.endpoint}/${id}`,
       config
@@ -43,13 +43,20 @@ export default class APIClient<T> {
     return response.data;
   };
 
-  patch = async (data: T, config?: AxiosRequestConfig) => {
-    const response = await axiosInstance.patch(this.endpoint, data, config);
+  patch = async (id: string, data: T, config?: AxiosRequestConfig) => {
+    const response = await axiosInstance.patch(
+      `${this.endpoint}/${id}`,
+      data,
+      config
+    );
     return response.data;
   };
 
-  delete = async (config?: AxiosRequestConfig) => {
-    const response = await axiosInstance.delete(this.endpoint, config);
+  delete = async (id: string, config?: AxiosRequestConfig) => {
+    const response = await axiosInstance.delete(
+      `${this.endpoint}/${id}`,
+      config
+    );
     return response.data;
   };
 }
