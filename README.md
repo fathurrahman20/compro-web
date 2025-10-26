@@ -117,10 +117,47 @@ bun run preview
 
 ---
 
-## 🔒 Authentication
+### 🔒 Authentication
 
-- Email/password login ke backend → JWT disimpan sebagai HttpOnly Cookie
-- TanStack Query digunakan untuk fetch user & session persist
-- Protected pages redirect ke `/login` jika tidak authenticated
+Aplikasi menggunakan **JWT Authentication dengan Bearer Token Scheme**:
+
+- **Access Token** & **Refresh Token** disimpan di Cookie
+- Setiap request ke endpoint menggunakan header:
+
+  ```
+  Authorization: Bearer <access_token>
+  ```
+
+- Jika access token kadaluarsa:
+
+  - Backend menyediakan endpoint refresh token untuk mendapatkan token baru
+  - Jika refresh gagal → user otomatis logout
+
+Protected route behavior:
+
+| Kondisi                | Aksi                            |
+| ---------------------- | ------------------------------- |
+| Tidak ada access token | Redirect ke `/login`            |
+| Refresh berhasil       | User tetap di halaman protected |
+| Refresh gagal          | Clear user + redirect login     |
+
+State management authentication dilakukan melalui:
+
+✅ React Context (AuthContext)
+✅ TanStack Query untuk API interaction
+✅ React Router untuk guard halaman
+
+---
+
+### 🧑‍💼 User Flow
+
+1. User login → access & refresh token disimpan
+2. AuthContext fetch user via `/auth/me`
+3. Protected route hanya render halaman ketika:
+
+   - `isAuthenticated === true`
+   - `isLoadingUser === false`
+
+4. Logout → semua token dan user state dibersihkan
 
 ---
