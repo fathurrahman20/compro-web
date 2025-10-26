@@ -10,6 +10,11 @@ export const columns: ColumnDef<News>[] = [
   {
     accessorKey: "content",
     header: "Content",
+    cell: ({ row }) => (
+      <div className="max-h-36 overflow-y-auto whitespace-pre-line">
+        {row.original.content}
+      </div>
+    ),
   },
   {
     accessorKey: "author.name",

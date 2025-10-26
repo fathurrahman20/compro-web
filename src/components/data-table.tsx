@@ -95,7 +95,10 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="rounded-md border h-full flex flex-col">
-        <Table className="w-full table-fixed min-h-screen overflow-y-scroll">
+        <Table
+          className={`w-full table-fixed overflow-y-auto ${
+            !data.length ? "min-h-[50vh]" : ""
+          }`}>
           <TableHeader className="sticky top-0 bg-white z-10">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
