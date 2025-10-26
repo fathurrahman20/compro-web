@@ -1,8 +1,9 @@
 import { queryClient } from "@/lib/queryClient";
 import type { NewsData } from "@/schema/schema";
-import APIClient from "@/service/api-client";
+import APIClient, { type ErrorResponse } from "@/service/api-client";
 import type { News } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { toast } from "react-toastify";
 
 interface AllNewsResponse {
@@ -31,8 +32,10 @@ export const useCreateNews = () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
       toast.success("News created successfully");
     },
-    onError: () => {
-      toast.error("Failed to create news article");
+    onError: (error: AxiosError<ErrorResponse>) => {
+      toast.error(
+        error.response?.data.message || "Failed to create news article"
+      );
     },
   });
 };
@@ -49,8 +52,10 @@ export const useUpdateNews = () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
       toast.success("News updated successfully");
     },
-    onError: () => {
-      toast.error("Failed to update news article");
+    onError: (error: AxiosError<ErrorResponse>) => {
+      toast.error(
+        error.response?.data.message || "Failed to update news article"
+      );
     },
   });
 };
@@ -66,8 +71,10 @@ export const useDeleteNews = () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
       toast.success("News deleted successfully");
     },
-    onError: () => {
-      toast.error("Failed to delete news article");
+    onError: (error: AxiosError<ErrorResponse>) => {
+      toast.error(
+        error.response?.data.message || "Failed to delete news article"
+      );
     },
   });
 };
