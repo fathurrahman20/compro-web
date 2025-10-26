@@ -16,12 +16,15 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/auth-context";
-import { useLogout } from "@/hooks/useAuth";
+import { removeToken } from "@/lib/token";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user } = useAuth();
-  const { mutate: logout } = useLogout();
+  const { user, clearUser } = useAuth();
+  const handleLogout = () => {
+    removeToken();
+    clearUser();
+  };
 
   return (
     <SidebarMenu>
@@ -62,7 +65,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => logout()}>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

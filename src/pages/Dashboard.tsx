@@ -17,23 +17,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@/context/auth-context";
 import { useGetNews } from "@/hooks/useNews";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 
 export default function DashboardPage() {
   const { data, isLoading } = useGetNews();
   const [isShowModal, setShowModal] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
 
   return (
     <SidebarProvider>

@@ -1,3 +1,4 @@
+import { getAccessToken } from "@/lib/token";
 import axios, { type AxiosRequestConfig } from "axios";
 
 export interface ErrorResponse {
@@ -11,8 +12,18 @@ export interface FetchResponse<T> {
   data: T;
 }
 
+const defaultHeaders: Record<string, string> = {
+  "Content-Type": "application/json",
+};
+
+const token = getAccessToken();
+if (token) {
+  defaultHeaders["Authorization"] = `Bearer ${token}`;
+}
+
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL!,
+  headers: defaultHeaders,
 });
 
 export default class APIClient<T> {
