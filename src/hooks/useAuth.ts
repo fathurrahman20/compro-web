@@ -1,12 +1,10 @@
 import { useAuth } from "@/context/auth-context";
-import APIClient, {
-  axiosInstance,
-  type ErrorResponse,
-} from "@/service/api-client";
+import APIClient, { type ErrorResponse } from "@/service/api-client";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { setAccessToken, setRefreshToken } from "@/lib/token";
 
 interface LoginRequest {
   email: string;
@@ -15,7 +13,7 @@ interface LoginRequest {
 
 export function useLogin() {
   const loginClient = new APIClient("/auth/login");
-  const { setUser } = useAuth();
+  const { setUser, setIsLoadingUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   return useMutation({
@@ -25,33 +23,18 @@ export function useLogin() {
       });
     },
     onSuccess: (data) => {
+      setAccessToken(data.data.accessToken);
+      setRefreshToken(data.data.refreshToken);
+
       setUser(data.data);
+      setIsAuthenticated(true);
+      setIsLoadingUser(false);
+
       toast.success("Successfully logged in");
       navigate("/dashboard");
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       toast.error(error.response?.data.message || "Login failed");
-    },
-  });
-}
-
-export function useLogout() {
-  const { setUser } = useAuth();
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: async () => {
-      return await axiosInstance.delete("/auth/logout", {
-        withCredentials: true,
-      });
-    },
-    onSuccess: () => {
-      setUser(null);
-      toast.success("Successfully logged out");
-      navigate("/");
-    },
-    onError: (error: AxiosError<ErrorResponse>) => {
-      toast.error(error.response?.data.message || "Logout failed");
     },
   });
 }

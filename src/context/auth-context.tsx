@@ -1,8 +1,9 @@
+import { getAccessToken, getRefreshToken, setAccessToken } from "@/lib/token";
 import APIClient from "@/service/api-client";
-import axios from "axios";
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -16,53 +17,85 @@ export type User = {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
   setUser: (user: User | null) => void;
+  isLoadingUser: boolean;
+  setIsLoadingUser: (isLoadingUser: boolean) => void;
+  clearUser: () => void;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
-  const getUser = new APIClient<User>("/auth/me");
-  const getUserRefresh = new APIClient<User>("/auth/refresh");
-
-  const loadUser = async () => {
-    try {
-      const response = await getUser.getAll({
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      setUser(response.data);
-      setIsAuthenticated(!!response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          try {
-            await getUserRefresh.getAll({
-              headers: {
-                "Content-Type": "application/json",
-              },
-              withCredentials: true,
-            });
-            await loadUser();
-          } catch {
-            setUser(null);
-            setIsAuthenticated(false);
-          }
-        }
-      }
+  const fetchUser = useCallback(async () => {
+    const getCurrentUser = new APIClient<User>("/auth/me");
+    const getUserRefresh = new APIClient("/auth/refresh");
+    const accessToken = getAccessToken();
+    if (!accessToken) {
+      setIsLoadingUser(false);
+      return;
     }
-  };
 
-  useEffect(() => {
-    loadUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    try {
+      const res = await getCurrentUser.getAll({
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      setUser(res.data);
+      setIsAuthenticated(true);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        clearUser();
+        return;
+      }
+
+      try {
+        const refreshRes = await getUserRefresh.getAll({
+          headers: { Authorization: `Bearer ${refreshToken}` },
+        });
+
+        setAccessToken(
+          (refreshRes.data as { accessToken: string }).accessToken
+        );
+        console.log(
+          `new AccESS Token: ${
+            (refreshRes.data as { accessToken: string }).accessToken
+          }`
+        );
+        await fetchUser();
+      } catch {
+        clearUser();
+      }
+    } finally {
+      setIsLoadingUser(false);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const clearUser = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    setIsLoadingUser(false);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, setUser, isAuthenticated }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        isAuthenticated,
+        setIsAuthenticated,
+        isLoadingUser,
+        setIsLoadingUser,
+        clearUser,
+      }}>
       {children}
     </AuthContext.Provider>
   );

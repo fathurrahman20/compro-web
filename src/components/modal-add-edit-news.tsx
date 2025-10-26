@@ -8,7 +8,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { type NewsData, newsSchema } from "@/schema/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -29,6 +28,7 @@ import {
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
 import { useCreateNews, useUpdateNews } from "@/hooks/useNews";
+import { newsSchema, type NewsData } from "@/schema/schema";
 
 interface ModalAddEditNewsProps {
   isOpen: boolean;
@@ -78,7 +78,6 @@ export function ModalAddEditNews({
     } else {
       addNews(data);
     }
-    console.log(data);
     setIsOpen(false);
     form.reset();
   }
