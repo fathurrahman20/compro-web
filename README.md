@@ -1,73 +1,126 @@
-# React + TypeScript + Vite
+# 🌐 Company Profile Web (COMPRO-WEB)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend dari aplikasi Company Profile, dibangun menggunakan React + TypeScript + Vite.
+Menggunakan TanStack Query untuk data fetching, Shadcn UI + TailwindCSS untuk styling, dan Zod untuk form validation.
 
-Currently, two official plugins are available:
+Live URL:
+👉 [https://compro-web.onrender.com/](https://compro-web.onrender.com/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer           | Teknologi                                     |
+| --------------- | --------------------------------------------- |
+| Framework       | React 19 + TypeScript                         |
+| Build Tool      | Vite                                          |
+| UI & CSS        | TailwindCSS, Shadcn UI, Headless UI, Radix UI |
+| Data Fetching   | TanStack React Query                          |
+| HTTP Client     | Axios                                         |
+| Form Validation | React Hook Form + Zod                         |
+| Animation       | Framer Motion                                 |
+| Routing         | React Router v7                               |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 📁 Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Struktur utama project:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+ ├─ animations/       → Framer motion variants
+ ├─ assets/           → Static assets (logo, images, icons)
+ ├─ components/       → Reusable UI components (global)
+ ├─ context/          → App context (user/auth state, etc.)
+ ├─ data/             → Static data list
+ ├─ hooks/            → Custom hooks
+ ├─ lib/              → Helpers & utilities (cn, configs)
+ ├─ pages/            → Page views
+ ├─ routes/           → Routing system (createBrowserRouter)
+ ├─ schema/           → Zod form validation schemas
+ ├─ service/          → API client (Axios + instance config)
+ ├─ types/            → TypeScript type definitions
+ ├─ App.tsx           → Root component
+ └─ main.tsx          → App mount + provider wrappers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🧭 Routing Overview
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Router `createBrowserRouter()`:
+
+| Path         | Komponen                | Deskripsi               |
+| ------------ | ----------------------- | ----------------------- |
+| `/login`     | `LoginPage`             | Login user              |
+| `/dashboard` | `DashboardPage`         | Protected route         |
+| `/`          | `MainLayout` + children | Public pages            |
+| `/about`     | `AboutPage`             | Company information     |
+| `/services`  | `ServicesPage`          | List layanan perusahaan |
+| `/contact`   | `ContactPage`           | Informasi kontak        |
+| `*`          | `NotFoundPage`          | 404 Page                |
+
+---
+
+## 📦 Setup Project
+
+Clone repo:
+
+```sh
+git clone https://github.com/fathurrahman20/compro-web.git
+cd compro-web
 ```
+
+Install dependencies:
+
+```sh
+bun install
+```
+
+> Bisa pakai `npm install` bila tidak pakai Bun
+
+Copy environment file:
+
+```sh
+cp .env.example .env
+```
+
+Set `.env` sesuai backend:
+
+```
+VITE_API_URL=https://compro-api.onrender.com
+```
+
+---
+
+## ▶️ Menjalankan Project
+
+Development:
+
+```sh
+bun dev
+```
+
+App akan berjalan di:
+
+```
+http://localhost:5173
+```
+
+Production build:
+
+```sh
+bun run build
+bun run preview
+```
+
+---
+
+## 🔒 Authentication
+
+- Email/password login ke backend → JWT disimpan sebagai HttpOnly Cookie
+- TanStack Query digunakan untuk fetch user & session persist
+- Protected pages redirect ke `/login` jika tidak authenticated
+
+---
