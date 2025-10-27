@@ -7,3 +7,20 @@ export const newsSchema = z.object({
 });
 
 export type NewsData = z.infer<typeof newsSchema>;
+
+export interface NewsResponse {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+  author: Author;
+}
+
+export interface Author {
+  id: string;
+  name: string;
+  email: string;
+}

@@ -1,13 +1,13 @@
 import { queryClient } from "@/lib/queryClient";
-import type { NewsData } from "@/schema/schema";
+import type { NewsData, NewsResponse } from "@/schema/schema";
 import APIClient, { type ErrorResponse } from "@/service/api-client";
-import type { News } from "@/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
 interface AllNewsResponse {
-  news: News[];
+  news: NewsResponse[];
   totalNews: number;
   totalPages: number;
   currentPage: number;
@@ -23,8 +23,14 @@ export const useGetNews = (page?: number) => {
   });
 };
 
-export const useGetDetailNews = (identity: string) => {
-  const newsClient = new APIClient<News>(`/news/${identity}`);
+export const useGetDetailNews = (identity: string | undefined) => {
+  const navigate = useNavigate();
+  const newsClient = new APIClient<NewsResponse>(`/news/${identity}`);
+
+  if (!identity) {
+    navigate("/news");
+  }
+
   return useQuery({
     queryKey: ["news", identity],
     queryFn: () => newsClient.getAll(),
