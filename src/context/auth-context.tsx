@@ -1,5 +1,5 @@
 import { getAccessToken, getRefreshToken, setAccessToken } from "@/lib/token";
-import APIClient from "@/service/api-client";
+import APIClient, { axiosInstance } from "@/service/api-client";
 import {
   createContext,
   type ReactNode,
@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUser = useCallback(async () => {
     const getCurrentUser = new APIClient<User>("/auth/me");
-    const getUserRefresh = new APIClient("/auth/refresh");
     const accessToken = getAccessToken();
     if (!accessToken) {
       setIsLoadingUser(false);
@@ -54,18 +53,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       try {
-        const refreshRes = await getUserRefresh.getAll({
-          headers: { Authorization: `Bearer ${refreshToken}` },
-        });
+        const refreshRes = await axiosInstance.post("/auth/refresh");
 
         setAccessToken(
-          (refreshRes.data as { accessToken: string }).accessToken
+          (refreshRes.data.data as { accessToken: string }).accessToken
         );
-        console.log(
-          `new AccESS Token: ${
-            (refreshRes.data as { accessToken: string }).accessToken
-          }`
-        );
+
         await fetchUser();
       } catch {
         clearUser();

@@ -149,6 +149,21 @@ State management authentication dilakukan melalui:
 
 ---
 
+### 🧑‍💻 Demo Credentials (Akses Dashboard)
+
+Untuk mencoba fitur **Dashboard (CRUD News)**, kamu bisa login langsung melalui halaman:
+
+👉 `/login`
+
+Gunakan kredensial berikut:
+
+```
+email: redaksi@mycompany.com
+password: password123
+```
+
+---
+
 ### 🧑‍💼 User Flow
 
 1. User login → access & refresh token disimpan
