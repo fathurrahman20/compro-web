@@ -1,5 +1,8 @@
 import { getAccessToken } from "@/lib/token";
-import axios, { type AxiosRequestConfig } from "axios";
+import axios, {
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+} from "axios";
 
 export interface ErrorResponse {
   message: string;
@@ -12,18 +15,16 @@ export interface FetchResponse<T> {
   data: T;
 }
 
-const defaultHeaders: Record<string, string> = {
-  "Content-Type": "application/json",
-};
-
-const token = getAccessToken();
-if (token) {
-  defaultHeaders["Authorization"] = `Bearer ${token}`;
-}
-
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL!,
-  headers: defaultHeaders,
+});
+
+axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export default class APIClient<T> {

@@ -26,7 +26,6 @@ export const useCreateNews = () => {
     mutationFn: (data: NewsData) =>
       createNewsClient.post(data, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
@@ -46,7 +45,6 @@ export const useUpdateNews = () => {
     mutationFn: ({ id, data }: { id: string; data: NewsData }) =>
       updateNewsClient.patch(id, data, {
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
@@ -63,10 +61,7 @@ export const useUpdateNews = () => {
 export const useDeleteNews = () => {
   const deleteNewsClient = new APIClient(`/news`);
   return useMutation({
-    mutationFn: (id: string) =>
-      deleteNewsClient.delete(id, {
-        withCredentials: true,
-      }),
+    mutationFn: (id: string) => deleteNewsClient.delete(id, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["news"] });
       toast.success("News deleted successfully");
