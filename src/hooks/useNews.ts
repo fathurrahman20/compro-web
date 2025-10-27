@@ -12,11 +12,22 @@ interface AllNewsResponse {
   totalPages: number;
   currentPage: number;
 }
-export const useGetNews = () => {
+export const useGetNews = (page?: number) => {
   const newsClient = new APIClient<AllNewsResponse>("/news");
   return useQuery({
-    queryKey: ["news"],
-    queryFn: () => newsClient.getAll({ withCredentials: true }),
+    queryKey: ["news", page],
+    queryFn: () =>
+      newsClient.getAll({
+        params: { page },
+      }),
+  });
+};
+
+export const useGetDetailNews = (identity: string) => {
+  const newsClient = new APIClient<News>(`/news/${identity}`);
+  return useQuery({
+    queryKey: ["news", identity],
+    queryFn: () => newsClient.getAll(),
   });
 };
 

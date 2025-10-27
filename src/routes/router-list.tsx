@@ -5,6 +5,7 @@ import ContactPage from "@/pages/Contact";
 import DashboardPage from "@/pages/Dashboard";
 import HomePage from "@/pages/Home";
 import LoginPage from "@/pages/Login";
+import NewsPage from "@/pages/News";
 import NotFoundPage from "@/pages/NotFound";
 import ServicesPage from "@/pages/Services";
 import { createBrowserRouter } from "react-router";
@@ -45,6 +46,10 @@ const routerList = createBrowserRouter([
       {
         path: "contact",
         element: <ContactPage />,
+      },
+      {
+        path: "news",
+        element: <NewsPage />,
       },
     ],
   },
